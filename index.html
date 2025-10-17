@@ -1354,7 +1354,7 @@ button.active {
   </div>
 </div>
 <div class="ui-logo left-logo">Zombie<br>Survivor</div>
-<div class="ui-logo right-logo">Bubble<br>Ver: 1.2</div>
+<div class="ui-logo right-logo">Bubble<br>Ver: 1.2a</div>
 <div id="ui">
   <button id="autoBtn" data-tooltip="⚙️ Auto:
 - Tự động tấn công zombie gần nhất
@@ -4656,7 +4656,7 @@ if (Math.random() < 0.01) {
   if (z.type === "miniBoss") extra += 5;
   if (z.type === "boss") extra += 10;
   if (z.isBigBoss || z.type === "bigBoss") extra += 20;
-  z.armor = baseArmor + extra;
+  z.armor = (wave === 1) ? 0 : (baseArmor + extra); // wave 1 không có giáp
 }
 
 // 📍 Tạo zombie ngẫu nhiên bên trong bản đồ
@@ -5864,7 +5864,7 @@ function sysUpdateWaveAndBoss(now) {
 
   const min = (remaining / 60) | 0, sec = (remaining | 0) % 60, cs = Math.floor((remaining - (remaining | 0)) * 100);
   setTextOnce(elWave, `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}:${cs.toString().padStart(2,'0')}`, "waveText");
-
+/* Cập nhật wave khi time hết */
   if (remaining <= 0) {
     wave++; pendingWave = wave; if (typeof showUpgradePopup === "function") showUpgradePopup();
     globalThis.wave = wave;  // Đồng bộ wave ra global để mọi nơi (kể cả popup hover) đọc được ngay
