@@ -2171,7 +2171,7 @@ zombieByLevel.boss = 0;
 zombieByLevel.miniBoss = 0;
 let skillStats = {};             // 📊 Thống kê kỹ năng
 // 🎯 EXP lên cấp
-const INITIAL_REQUIRED_EXP = 100; // EXP cần để lên cấp
+const INITIAL_REQUIRED_EXP = 10; // EXP cần để lên cấp
 // 🧍 Trạng thái người chơi
 const player = {
   x: 480, y: 360, size: 20, speed: 1,
@@ -6588,7 +6588,7 @@ function skillUpdateSatellites(now) {
       // nearest trong 500
       const t = nearestZombieInRange(sat.x, sat.y, 500);
       if (t) {
-        playSound('sfx-laser', 0.5); sat.laserCooldown = now + 2000;
+        playSound('sfx-laser', 0.5); sat.laserCooldown = now + 1000; // Tốc độ bắn laze
         sat.laserBeam = { angle: Math.atan2(t.y - sat.y, t.x - sat.x), life: 60, hitZombiesThisShot: new Set() };
       }
     }
@@ -10427,7 +10427,7 @@ ufos.forEach(ufo => {
                 });
             }
             // Đặt lại thời gian hồi chiêu
-            ufo.laserCooldown = Date.now() + 1500; // Bắn mỗi 1.5 giây
+            ufo.laserCooldown = Date.now() + 1000; // Bắn mỗi 1 giây
         }
         
         if (ufo.laserLife > 0) ufo.laserLife--;
@@ -12142,10 +12142,10 @@ const rand    = arr => arr[Math.random() * arr.length | 0];          // pickRand
 const shuffle = a => a.sort(() => Math.random() - .5);               // Fisher–Yates 1-liner
 
 /* kiểm tra 1 nâng cấp có “hết đát” chưa */
-function isOverLimit(upgrade){
+function isOverLimit(upgrade, parentSkill){
   const key = Object.keys(UP_RX).find(k => UP_RX[k].test(upgrade.name));
   if (!key) return false;                                            // gói sát thương, v.v.
-  const active = activeSkills.find(s => s.name === upgrade.skillName);
+  const active = activeSkills.find(s => s.name === parentSkill.name);
   return active && (active.level || 0) >= MAX_LV[key];
 }
 
@@ -12172,7 +12172,7 @@ function showSkillLevelUpPopup() {
         if (activeSkill && skill.upgrades) {
             upgradesBySkill[skill.name] = upgradesBySkill[skill.name] || [];
             for (const upgrade of skill.upgrades) {
-                if (!isOverLimit(upgrade)) {
+                if (!isOverLimit(upgrade, skill)) {
                     upgradesBySkill[skill.name].push({ ...upgrade, skillName: skill.name });
                 }
             }
